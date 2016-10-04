@@ -1,5 +1,5 @@
 import * as path from 'path';
-import 'mocha';
+import * as Mocha from 'mocha';
 import { assert } from 'chai';
 import { getDocumentation } from '../parser';
 import { convertToDocgen } from '../docgenConverter';
