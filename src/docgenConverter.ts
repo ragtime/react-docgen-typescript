@@ -4,32 +4,35 @@ export function convertToDocgen(doc: FileDoc) {
   const reactClasses = doc.classes.filter(i => i.extends === 'Component');
 
   if (reactClasses.length === 0) {
-    return null;
+    return [];
   }
   const comp = reactClasses[0];
   const reactInterfaces = doc.interfaces.filter(i => i.name === comp.propInterface);
   if (reactInterfaces.length === 0) {
-    return null;
+    return [];
   }
   const props = reactInterfaces[0];
 
-  return {
-    description: comp.comment,
-    props: props.members.reduce((acc, i) => {
-      const item: PropItem = {
-        description: i.comment,
-        type: { name: i.type },
-        defaultValue: null,
-        required: i.isRequired
-      };
-      if (i.values) {
-        item.description = item.description + ' (one of the following:' + i.values.join(',') + ')';
-      }
+  return [
+    {
+      description: comp.comment,
+      path: comp.name,
+      props: props.members.reduce((acc, i) => {
+        const item: PropItem = {
+          description: i.comment,
+          type: { name: i.type },
+          defaultValue: null,
+          required: i.isRequired
+        };
+        if (i.values) {
+          item.description = item.description + ' (one of the following:' + i.values.join(',') + ')';
+        }
 
-      acc[i.name] = item;
-      return acc;
-    }, {})
-  }
+        acc[i.name] = item;
+        return acc;
+      }, {})
+    }
+  ];
 }
 
 export interface PropItemType {

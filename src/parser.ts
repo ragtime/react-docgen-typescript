@@ -65,6 +65,11 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                 .filter(i => i.kind === ts.SyntaxKind.Identifier)
                 .map((i: ts.Identifier) => i.text);
 
+            if(list.length > 0 && list[0] === 'React'){
+                // this hack fixes the list if the Component was created as `extends React.XYZ`
+                list.splice(0, 1);
+            }
+
             classes.push({
                 name: symbol.name,
                 comment: ts.displayPartsToString(symbol.getDocumentationComment()),
@@ -89,7 +94,7 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                         text: i.valueDeclaration.getText(),
                         type: typeInfo.type,
                         values: typeInfo.values,
-                        isRequired: prop.questionToken === null,
+                        isRequired: !(prop.questionToken),
                         comment: ts.displayPartsToString(symbol.getDocumentationComment()).trim(),
                     };                    
                 });
